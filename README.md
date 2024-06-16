@@ -46,7 +46,7 @@ Antes de começar, você vai precisar ter instalado em sua máquina as seguintes
 1. Clone o repositório:
 
    ```bash
-   git clone https://github.com/seu-usuario/eventostec.git
+   git clone https://github.com/gabrielalmir/eventostec.git
    ```
 
 2. Navegue até o diretório do projeto:
