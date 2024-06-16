@@ -36,7 +36,8 @@ Antes de começar, você vai precisar ter instalado em sua máquina as seguintes
 - [Java 11+](https://www.oracle.com/java/technologies/javase-jdk11-downloads.html)
 - [Maven](https://maven.apache.org/install.html)
 - [PostgreSQL](https://www.postgresql.org/download/)
-- [Docker](https://www.docker.com/get-started) (opcional)
+- [Docker](https://www.docker.com/get-started)
+- [LocalStack](https://github.com/localstack/localstack)
 
 ## Instalação
 
