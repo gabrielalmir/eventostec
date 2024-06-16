@@ -21,6 +21,8 @@ O **eventostec** é uma plataforma que centraliza eventos e meetups da comunidad
 - **Java Spring:** Framework para o desenvolvimento do backend.
 - **PostgreSQL:** Banco de dados relacional.
 - **AWS:** Serviços de deploy e gerenciamento de infraestrutura.
+- **Docker:** Plataforma para desenvolvimento, deploy e execução de aplicações.
+- **LocalStack:** Framework para simular serviços da AWS localmente.
 
 ## Funcionalidades
 
