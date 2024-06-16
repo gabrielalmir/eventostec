@@ -31,9 +31,9 @@ public class EventService {
         this.eventRepository = eventRepository;
     }
 
-    public List<EventResponseDTO> getEvents(int page, int size) {
+    public List<EventResponseDTO> getUpcomingEvents(int page, int size) {
         var pageable = PageRequest.of(page, size);
-        var eventsPage = this.eventRepository.findAll(pageable);
+        var eventsPage = this.eventRepository.findUpcomingEvents(new Date(), pageable);
         return eventsPage.map(event -> new EventResponseDTO(event)).toList();
     }
 
