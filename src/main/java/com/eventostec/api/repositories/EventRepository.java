@@ -28,4 +28,6 @@ public interface EventRepository extends JpaRepository<Event, UUID> {
         @Param("endDate") Date endDate,
         Pageable pageable
     );
+
+    public Event findEventById(UUID id);
 }

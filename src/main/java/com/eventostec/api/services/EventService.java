@@ -14,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.eventostec.api.domain.event.Event;
+import com.eventostec.api.domain.event.EventDetailsDTO;
 import com.eventostec.api.domain.event.EventRequestDTO;
 import com.eventostec.api.domain.event.EventResponseDTO;
 import com.eventostec.api.repositories.EventRepository;
@@ -92,5 +93,13 @@ public class EventService {
             event.getAddress() != null ? event.getAddress().getCity() : "",
             event.getAddress() != null ? event.getAddress().getUf() : "",
             event.getRemote(), event.getEventUrl(), event.getImageUrl())).toList();
+    }
+
+    public EventDetailsDTO getEventDetails(UUID eventId) {
+        var event = this.eventRepository.findEventById(eventId);
+        var eventDto = new EventDetailsDTO(event.getId(), event.getTitle(), event.getDescription(),
+            event.getAddress() != null ? event.getAddress().getCity() : "",
+            event.getAddress() != null ? event.getAddress().getUf() : "", event.getRemote(), event.getDate());
+        return eventDto;
     }
 }
