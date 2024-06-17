@@ -13,9 +13,4 @@ public record EventResponseDTO(
     Boolean remote,
     String eventUrl,
     String imageUrl
-) {
-    public EventResponseDTO(Event event) {
-        this(event.getId(), event.getTitle(), event.getDescription(),
-            event.getDate(), "", "", event.getRemote(), event.getEventUrl(), event.getImageUrl());
-    }
-}
+) {}

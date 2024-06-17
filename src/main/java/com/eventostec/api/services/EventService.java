@@ -31,12 +31,6 @@ public class EventService {
         this.eventRepository = eventRepository;
     }
 
-    public List<EventResponseDTO> getUpcomingEvents(int page, int size) {
-        var pageable = PageRequest.of(page, size);
-        var eventsPage = this.eventRepository.findUpcomingEvents(new Date(), pageable);
-        return eventsPage.map(event -> new EventResponseDTO(event)).toList();
-    }
-
     public Event createEvent(EventRequestDTO request) throws IOException {
         String imageUrl = null;
 
@@ -72,5 +66,31 @@ public class EventService {
         fos.write(multipartFile.getBytes());
         fos.close();
         return file;
+    }
+
+    public List<EventResponseDTO> getUpcomingEvents(int page, int size) {
+        var pageable = PageRequest.of(page, size);
+        var eventsPage = this.eventRepository.findUpcomingEvents(new Date(), pageable);
+        return eventsPage.map(event -> new EventResponseDTO(
+            event.getId(), event.getTitle(), event.getDescription(), event.getDate(),
+            event.getAddress() != null ? event.getAddress().getCity() : "",
+            event.getAddress() != null ? event.getAddress().getUf() : "",
+            event.getRemote(), event.getEventUrl(), event.getImageUrl())).toList();
+    }
+
+    public List<EventResponseDTO> getFilteredEvents(int page, int size, String title, String city, String uf, Date startDate, Date endDate) {
+        title = title != null ? title : "";
+        city = city != null ? city : "";
+        uf = uf != null ? uf : "";
+        startDate = startDate != null ? startDate : new Date(0);
+        endDate = endDate != null ? endDate : new Date();
+        var pageable = PageRequest.of(page, size);
+        var eventsPage = this.eventRepository.findFilteredEvents(title, city, uf, startDate, endDate, pageable);
+
+        return eventsPage.map(event -> new EventResponseDTO(
+            event.getId(), event.getTitle(), event.getDescription(), event.getDate(),
+            event.getAddress() != null ? event.getAddress().getCity() : "",
+            event.getAddress() != null ? event.getAddress().getUf() : "",
+            event.getRemote(), event.getEventUrl(), event.getImageUrl())).toList();
     }
 }
