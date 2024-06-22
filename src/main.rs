@@ -1,5 +1,6 @@
-mod config;
+mod db;
 mod event;
+mod aws;
 
 use std::env;
 use axum::Router;
@@ -18,7 +19,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let app = Router::new()
         .nest("/api/event", event_routes);
 
-    println!("Server running on: http://{}", addr);
+    println!("> Server running on: http://{}", addr);
     let server = TcpListener::bind(&addr).await?;
     axum::serve(server, app).await?;
 

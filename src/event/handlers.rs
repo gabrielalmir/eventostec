@@ -1,14 +1,14 @@
-use std::fs;
-use std::path::Path;
+use std::env;
 
+use aws_sdk_s3::primitives::ByteStream;
 use axum::extract::{self, Multipart};
 use axum::response::IntoResponse;
 use axum::Json;
 use axum::{http, routing::post};
 use sqlx::PgPool;
-use tokio::io::AsyncWriteExt;
 
-use crate::config;
+use crate::aws::config::AwsConfig;
+use crate::db::config;
 
 use super::dtos::CreateEventDTO;
 use super::models::Event;
@@ -36,22 +36,26 @@ pub async fn create_event (
     }
 }
 
-async fn upload_image (data: &[u8], original_filename: &str) -> Result<String, std::io::Error> {
-    // create image folder if it doesn't exist
-    if !Path::new("images").exists() {
-        fs::create_dir("images").unwrap();
-    }
+async fn upload_image (data: &[u8], original_filename: &str) -> Result<String, Box<dyn std::error::Error>> {
+    let s3_client = AwsConfig::s3().await;
+    let filename = format!("{}-{}", uuid::Uuid::new_v4(), original_filename);
+    let key = filename.as_str();
+    let body = ByteStream::from(data.to_vec());
 
-    let filename = uuid::Uuid::new_v4().to_string();
-    let path = format!("images/{}-{}", filename, original_filename);
-    let mut file = tokio::fs::File::create(&path).await?;
+    let bucket = env::var("AWS_BUCKET_NAME").expect("AWS_BUCKET_NAME is not set");
 
-    match file.write_all(data).await {
-        Ok(_) => Ok(path),
-        Err(e) => {
-            eprintln!("Failed to upload image: {:?}", e);
-            return Err(e);
-        }
+    let response = s3_client.put_object()
+        .bucket(&bucket)
+        .key(key)
+        .body(body)
+        .send()
+        .await;
+
+    let url = AwsConfig::s3_url(&bucket, key).await;
+
+    match response {
+        Ok(_) => Ok(url),
+        Err(e) => Err(Box::new(e)),
     }
 }
 
