@@ -3,14 +3,16 @@ use std::path::Path;
 
 use axum::extract::{self, Multipart};
 use axum::response::IntoResponse;
+use axum::Json;
 use axum::{http, routing::post};
-use sqlx::{query, PgPool};
+use sqlx::PgPool;
 use tokio::io::AsyncWriteExt;
 
 use crate::config;
 
 use super::dtos::CreateEventDTO;
 use super::models::Event;
+use super::repositories::EventRepository;
 
 pub async fn create_event (
     extract::State(pool): extract::State<PgPool>,
@@ -27,26 +29,10 @@ pub async fn create_event (
         create_event_dto.remote,
     );
 
-    let sql = r#"
-        INSERT INTO event (id, title, description, image_url, event_url, date, remote)
-        VALUES ($1, $2, $3, $4, $5, $6, $7)"#;
-    let query = query(sql)
-        .bind(&event.id)
-        .bind(&event.title)
-        .bind(&event.description)
-        .bind(&event.image_url)
-        .bind(&event.event_url)
-        .bind(&event.date)
-        .bind(&event.remote)
-        .execute(&pool)
-        .await;
-
-    match query {
-        Ok(_) => Ok((http::StatusCode::CREATED, axum::Json(event))),
-        Err(e) => {
-            eprintln!("Failed to execute query: {:?}", e);
-            Err(http::StatusCode::INTERNAL_SERVER_ERROR)
-        }
+    let repository = EventRepository::new(pool);
+    match repository.create_event(event).await {
+        Ok(event) => Ok(Json(event).into_response()),
+        Err(_) => Err(http::StatusCode::INTERNAL_SERVER_ERROR),
     }
 }
 
