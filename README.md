@@ -40,20 +40,20 @@ Este projeto foi feito para estudar conceitos fundamentais de Rust, Axum, SQLx, 
 1. Clone o repositório
 
 ```sh
-    git clone https://github.com/gabrielalmir/eventostec.git
+git clone https://github.com/gabrielalmir/eventostec.git
 ```
 
 2. Execute o comando `docker-compose up` para subir o banco de dados Postgres
 
 ```sh
-    docker-compose up
+docker-compose up
 ```
 
 3. Execute o comando `cargo run` para subir o servidor
 
 ```sh
-    cargo build --release
-    cargo run
+cargo build --release
+cargo run
 ```
 
 ## Configuração
