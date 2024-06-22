@@ -3,17 +3,14 @@ use std::path::Path;
 
 use axum::extract::{self, Multipart};
 use axum::response::IntoResponse;
-use axum::{http, routing::{get, post}};
+use axum::{http, routing::post};
 use sqlx::{query, PgPool};
 use tokio::io::AsyncWriteExt;
 
-use crate::dtos::CreateEventDTO;
 use crate::config;
-use crate::models::Event;
 
-pub async fn health () -> http::StatusCode {
-    http::StatusCode::OK
-}
+use super::dtos::CreateEventDTO;
+use super::models::Event;
 
 pub async fn create_event (
     extract::State(pool): extract::State<PgPool>,
@@ -76,7 +73,6 @@ pub async fn routes() -> axum::Router<()> {
     let pool = config::pool().await;
 
     axum::Router::new()
-        .route("/health", get(health))
-        .route("/event", post(create_event))
+        .route("/", post(create_event))
         .with_state(pool)
 }

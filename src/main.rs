@@ -1,7 +1,5 @@
-mod handlers;
 mod config;
-mod models;
-mod dtos;
+mod event;
 
 use std::env;
 use axum::Router;
@@ -15,10 +13,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let port = env::var("PORT").unwrap_or_else(|_| "8080".to_string());
     let addr = format!("0.0.0.0:{}", port);
 
-    let routes = handlers::routes().await;
+    let event_routes = event::handlers::routes().await;
 
     let app = Router::new()
-        .nest("/api", routes);
+        .nest("/api/event", event_routes);
 
     println!("Server running on: http://{}", addr);
     let server = TcpListener::bind(&addr).await?;
